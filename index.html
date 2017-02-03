@@ -7,16 +7,30 @@
 </head>
 
 <body>
-    <canvas id="myCanvas" width="100" height="100"></canvas>
+    <canvas id="myCanvas" width="300" height="300"></canvas>
     <script src="spriteBatch.js"></script>
     <script>
-        var myCanvas = document.getElementById('myCanvas');
-        var gl = canvas.getContext('webgl');
-        
-        if(gl) {
-            gl.clearColor(0.0,0.0,0.0,1.0);
-            apploop();
 
+        var myCanvas = document.getElementById('myCanvas');
+        var gl = myCanvas.getContext('webgl', {alpha:false});
+        
+
+        if(gl) {
+            var spriteBatch = new SpriteBatch(gl);
+
+            var sprite = gl.createTexture();
+            var spriteSize = new Vector(128,128);
+            var destination = new Vector(20,20);
+            var color = new Uint8Array([255,255,255,255]);
+
+            gl.clearColor(0.0,0.0,0.0,1.0);
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthFunc(gl.LEQUAL);
+
+            loadImageForTexture("upg_hammer.png",sprite, function() {
+                apploop();
+            });
+    
         } else {
             //context not supported
         }
@@ -24,6 +38,11 @@
         function apploop() {
             window.requestAnimationFrame(apploop);
             gl.clear(gl.COLOR_BUFFER_BIT);
+
+            //draw sprites
+            spriteBatch.begin(SpriteSortMode.Deferred,gl.FUNC_ADD);
+            spriteBatch.draw(sprite,spriteSize,destination,color);
+            spriteBatch.end();
 
         }
         
