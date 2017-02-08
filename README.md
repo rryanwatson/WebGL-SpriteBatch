@@ -27,12 +27,14 @@ Object that controls the batching and drawing of sprites.
 ##### init(context)
 Initializes all the things.
 Parameters:
+
 Name|Type|Description
 ----|----|-----------
 context|WebGLRenderingContext|Context returned from canvas.getContext('webgl')
 
 ##### begin(sortMode, blendEquation)
 Parameters (Work in Progress):
+
 Name|Type|Description
 ----|----|-----------
 
@@ -40,6 +42,7 @@ Name|Type|Description
 ##### draw(options)
 Draws your sprite. Call this between a begin and end call.
 The options parameter has the following properites:
+
 Name|Type|Description
 ----|----|-----------
 texture|WebGLTexture|If your texture was loaded with SpriteBatch.loadSprites(), you do not need to set this.
