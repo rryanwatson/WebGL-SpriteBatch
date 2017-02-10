@@ -466,7 +466,7 @@ var SpriteBatch = (function() {
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
         },
         /**
-         * Call this function befor calling any draw calls.
+         * Call this function before calling any draw calls.
          * @param {SpriteSortMode} sortMode
          * @param {blendEquation} blendEquation
          */

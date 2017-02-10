@@ -1,3 +1,8 @@
+
+/**
+ * @param {...number} - The length of the vector created depends on the number
+ * of arguments supplied.
+ */
 function Vector() {
 
     if(!arguments.length) {
@@ -8,20 +13,15 @@ function Vector() {
 
     for(var i=0; i<arguments.length; this.data[i]=arguments[i],i++); 
     this.length = arguments.length;
-
-    //IF this next piece of code works the way i think it does, this is freaking sweet 
-    switch(arguments.length) {
-        case 4:
-            Object.defineProperty(this,"w", { get: function() { return this.data[3]; }, set: function(input) { this.data[3] = input; } });
-        case 3:
-            Object.defineProperty(this,"z", { get: function() { return this.data[2]; }, set: function(input) { this.data[2] = input; } }); 
-        case 2:
-            Object.defineProperty(this,"y", { get: function() { return this.data[1]; }, set: function(input) { this.data[1] = input; } });
-        case 1:
-            Object.defineProperty(this,"x", { get: function() { return this.data[0]; }, set: function(input) { this.data[0] = input; } }); 
-    }
-
 }
+
+
+//Warning: No checking if vector is long enuff to define these
+Object.defineProperty(Vector.prototype,"w", { get: function() { return this.data[3]; }, set: function(input) { this.data[3] = input; } });
+Object.defineProperty(Vector.prototype,"z", { get: function() { return this.data[2]; }, set: function(input) { this.data[2] = input; } }); 
+Object.defineProperty(Vector.prototype,"y", { get: function() { return this.data[1]; }, set: function(input) { this.data[1] = input; } });
+Object.defineProperty(Vector.prototype,"x", { get: function() { return this.data[0]; }, set: function(input) { this.data[0] = input; } }); 
+
 
 
 //WARNING: none of these functions test for division by 0, isNaN, isFinite!!!!!!

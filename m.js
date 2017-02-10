@@ -81,7 +81,6 @@ Matrix4.prototype.Multiply = function() {
 
 //static things----------------------------------
 
-Matrix4.EPSILON = Math.pow(2,-52);
 
 
 Matrix4.CreateIdentity = function() {
