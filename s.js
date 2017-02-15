@@ -34,11 +34,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @struct
  * @private
  * @param {WebGLTexture} Texture - A texture for the sprite
- * @param {Vector} Source - (left,top,right,bottom) - The rectangle in texels defining the region to draw on the image.
- * @param {Vector} Destination -(left,top,right,bottom) The rectangle defining the in screen coordinates of the sprite we are going to draw. 
+ * @param {Vector4} Source - (left,top,right,bottom) - The rectangle in texels defining the region to draw on the image.
+ * @param {Vector4} Destination -(left,top,right,bottom) The rectangle defining the in screen coordinates of the sprite we are going to draw. 
  * @param {Uint8Array} Color - [r,g,b,a], 0-255
- * @param {Vector} OriginRotationDepth - (x,y,angleInRadians,depth)
- * @param {Vector} TextureSize - (width,height)
+ * @param {Vector4} OriginRotationDepth - (x,y,angleInRadians,depth)
+ * @param {Vector2} TextureSize - (width,height)
  */
 function SpriteInfo(Texture,Source,Destination,Color,OriginRotationDepth,TextureSize) {
     this.texture = Texture;
@@ -204,7 +204,7 @@ var SpriteBatch = (function() {
         //set the global transformMatrix
         gl.uniformMatrix4fv(transformMatLoc, false, transformMatrix.data);
         //set the viewport size
-        gl.uniform2fv(viewportSizeLoc, [gl.drawingBufferWidth,gl.drawingBufferHeight]);
+        gl.uniform2f(viewportSizeLoc, gl.drawingBufferWidth,gl.drawingBufferHeight);
 
     }
 
@@ -252,7 +252,12 @@ var SpriteBatch = (function() {
     function renderSprite(sprite,offset) {
             
         //flip y to convert from HTML DOM coords to Webgl coords
-        sprite.source.multiply(1.0/sprite.textureSize.x,1.0/sprite.textureSize.y,1.0/sprite.textureSize.x,1.0/sprite.textureSize.y);
+        //sprite.source.multiply(1.0/sprite.textureSize.x,1.0/sprite.textureSize.y,1.0/sprite.textureSize.x,1.0/sprite.textureSize.y);
+        sprite.source.x *= 1.0/sprite.textureSize.x;
+        sprite.source.y *= 1.0/sprite.textureSize.y;
+        sprite.source.z *= 1.0/sprite.textureSize.x;
+        sprite.source.w *= 1.0/sprite.textureSize.y;
+
         sprite.source.y = 1.0 - sprite.source.y;
         sprite.source.w = 1.0 - sprite.source.w;
 
@@ -376,11 +381,11 @@ var SpriteBatch = (function() {
             spriteInfoArray = new Array(MaxBatchSize);
             for(var i = 0; i  <MaxBatchSize; i++) {
                 spriteInfoArray[i] = new SpriteInfo();
-                spriteInfoArray[i].source = new Vector(0,0,0,0);
-                spriteInfoArray[i].destination = new Vector(0,0,0,0);
+                spriteInfoArray[i].source = new Vector4(0,0,0,0);
+                spriteInfoArray[i].destination = new Vector4(0,0,0,0);
                 spriteInfoArray[i].color =  new Uint8ClampedArray([0,0,0,0]);
-                spriteInfoArray[i].originRotationDepth = new Vector(0,0,0,0);
-                spriteInfoArray[i].textureSize = new Vector(0,0);
+                spriteInfoArray[i].originRotationDepth = new Vector4(0,0,0,0);
+                spriteInfoArray[i].textureSize = new Vector2(0,0);
             }
 
             blendState = gl.FUNC_ADD;
@@ -486,16 +491,16 @@ var SpriteBatch = (function() {
          * Draws a sprite with the specified options.
          * @param {Object} options - Information about how you want to draw your sprite.
          * @param {WebGLTexture} options.texture - If your texture was loaded with spriteBatch.loadSprites, you do not need to set this.
-         * @param {Vector} options.textureSize - (width,height) If your texture was loaded with spriteBatch.loadSprites, you do not need to set this. 
-         * @param {Vector} options.destination - (left,top,right,bottom) or (x,y) destination in screen coordinates.
+         * @param {Vector2} options.textureSize - (width,height) If your texture was loaded with spriteBatch.loadSprites, you do not need to set this. 
+         * @param {Vector4} options.destination - (left,top,right,bottom) or (x,y) destination in screen coordinates.
          * @param {Uint8Array} [options.color] - [r,g,b,a], default color: [255,255,255,255]
-         * @param {Vector} [options.source] - (left,top,right,bottom) Source in texels. (0,0) is top left.
+         * @param {Vector4} [options.source] - (left,top,right,bottom) Source in texels. (0,0) is top left.
          * If undefined, use whole texture !!!Make sure source size is greater than zero!!!!
-         * @param {Vector} [options.origin]  - (x,y) If undefined, then origin will be upper left corner (0,0) of the sprite.
+         * @param {Vector2} [options.origin]  - (x,y) If undefined, then origin will be upper left corner (0,0) of the sprite.
          * Origin is set relative to the destination rectangle.
          * @param {number} [options.rotation] - Specify an angle in radians.
          * @param {number} [options.depth] - Specify an integer >= 0 to define the drawing order. 
-         * @param {Vector} [options.scale] - (scaleX,scaleY) 
+         * @param {Vector2} [options.scale] - (scaleX,scaleY) 
          * 
          * @throws {Error} -Max batch size is too small to add any more sprites. Increase it.
         */
@@ -509,9 +514,9 @@ var SpriteBatch = (function() {
             spriteInfoArray[queueCount].textureSize.set(options.textureSize);
 
             if(options.color) {
-                spriteInfoArray[queueCount].color.set(options.color);
+                spriteInfoArray[queueCount].color = options.color;
             } else {
-                spriteInfoArray[queueCount].color.set(defaultColor);       
+                spriteInfoArray[queueCount].color = defaultColor;       
             }
             
             
@@ -519,7 +524,10 @@ var SpriteBatch = (function() {
             if(options.source) {
                 spriteInfoArray[queueCount].source.set(options.source);
             } else {
-                spriteInfoArray[queueCount].source.set(0,0,options.textureSize.x,options.textureSize.y);
+                spriteInfoArray[queueCount].source.x = 0;
+                spriteInfoArray[queueCount].source.y = 0;
+                spriteInfoArray[queueCount].source.z = options.textureSize.x;
+                spriteInfoArray[queueCount].source.w = options.textureSize.y;
             }
 
             if(options.destination.z) {
@@ -527,7 +535,10 @@ var SpriteBatch = (function() {
             } else {
                 sx = (spriteInfoArray[queueCount].source.z-spriteInfoArray[queueCount].source.x);
                 sy = (spriteInfoArray[queueCount].source.w-spriteInfoArray[queueCount].source.y);
-                spriteInfoArray[queueCount].destination.set(options.destination.x,options.destination.y,sx+options.destination.x,sy+options.destination.y);
+                spriteInfoArray[queueCount].destination.x = options.destination.x;
+                spriteInfoArray[queueCount].destination.y = options.destination.y;
+                spriteInfoArray[queueCount].destination.z = sx+options.destination.x;
+                spriteInfoArray[queueCount].destination.w = sy+options.destination.y;
             }
 
             if(options.scale) {
@@ -535,7 +546,10 @@ var SpriteBatch = (function() {
                 sw =  (spriteInfoArray[queueCount].destination.w - options.destination.y)*options.scale.y;
                 sx = options.destination.x;
                 sy = options.destination.y;
-                spriteInfoArray[queueCount].destination.set(sx,sy,sx+sz,sy+sw);
+                spriteInfoArray[queueCount].destination.x = sx;
+                spriteInfoArray[queueCount].destination.y = sy;
+                spriteInfoArray[queueCount].destination.z = sx+sy;
+                spriteInfoArray[queueCount].destination.w = sy+sw;
             } 
 
             if(options.origin) {
@@ -543,12 +557,19 @@ var SpriteBatch = (function() {
                 sx = options.origin.x;
                 sy = options.origin.y;
                 
-                spriteInfoArray[queueCount].destination.subtract(sx,sy,sx,sy);
+                spriteInfoArray[queueCount].destination.x -= sx;
+                spriteInfoArray[queueCount].destination.y -= sy;
+                spriteInfoArray[queueCount].destination.z -= sx;
+                spriteInfoArray[queueCount].destination.w -= sy;
+
 
                 sz = spriteInfoArray[queueCount].destination.x;
                 sw = spriteInfoArray[queueCount].destination.y;
 
-                spriteInfoArray[queueCount].originRotationDepth.set(sz+sx,sw+sy,0,0);
+                spriteInfoArray[queueCount].originRotationDepth.x = sz+sx;
+                spriteInfoArray[queueCount].originRotationDepth.y = sw+sy;
+                spriteInfoArray[queueCount].originRotationDepth.z = 0;
+                spriteInfoArray[queueCount].originRotationDepth.w = 0;
             } 
 
             if(checkIfRotationDefined in options) {
@@ -627,7 +648,7 @@ var SpriteBatch = (function() {
 
                         //check to see if we can get the image height and width
                         if(images[index].naturalHeight && images[index].naturalWidth) {
-                            spriteInfo[index].textureSize = new Vector(images[index].naturalWidth,images[index].naturalHeight);                   
+                            spriteInfo[index].textureSize = new Vector2(images[index].naturalWidth,images[index].naturalHeight);                   
                         } else {
                             console.log('UNABLE TO GET IMAGE DIMENSIONS: ' + e.target.src);
                             isLoaded[index] = false;
@@ -638,7 +659,7 @@ var SpriteBatch = (function() {
                         gl.bindTexture(gl.TEXTURE_2D, spriteInfo[index].texture);
                         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
                         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true); //weird
-                        gl.texImage2D(gl.TEXTURE_2D,0, gl.RGBA,gl.RGBA, gl.UNSIGNED_BYTE,images[index]);
+                        gl.texImage2D(gl.TEXTURE_2D,0, gl.RGBA,gl.RGBA, gl.UNSIGNED_BYTE,images[index]);  //conversion requires pixel reformatting??
                         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
                         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
                         gl.bindTexture(gl.TEXTURE_2D,null);
@@ -659,7 +680,7 @@ var SpriteBatch = (function() {
 
                     //check to see if we can get the image height and width
                     if(image.naturalHeight && image.naturalWidth) {
-                        spriteInfo.textureSize = new Vector(image.naturalWidth,image.naturalHeight);                   
+                        spriteInfo.textureSize = new Vector2(image.naturalWidth,image.naturalHeight);                   
                     } else {
                         console.log('UNABLE TO GET IMAGE DIMENSIONS: ' + e.target.src);
                         return;
@@ -681,7 +702,7 @@ var SpriteBatch = (function() {
         /**
          * Utility function that reduces many sprites into one sprite. It saves draw calls.
          * 
-         * @param {Vector} rectangle - (left,top,right,bottom)
+         * @param {Vector4} rectangle - (left,top,right,bottom)
          * @param {WebGLTexture} 
         */
         reduce: function(box,texture) {

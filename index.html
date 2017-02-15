@@ -23,9 +23,9 @@
                 //var spriteBatch = new SpriteBatch(gl);
                 SpriteBatch.init(gl);
 
-                var axe1 = {url:'Sprites/axe.png', destination: new Vector(20,0), depth: 2},
-                    axe2 = {url:'Sprites/axe2.png', destination: new Vector(30,45), depth: 1},
-                    axe3 = {url:'Sprites/upg_axe.png', destination: new Vector(40,140), depth: 5};
+                var axe1 = {url:'Sprites/axe.png', destination: new Vector2(20,0), depth: 2},
+                    axe2 = {url:'Sprites/axe2.png', destination: new Vector2(30,45), depth: 1},
+                    axe3 = {url:'Sprites/upg_axe.png', destination: new Vector2(40,140), depth: 5};
 
                 SpriteBatch.loadSprites( [axe1,axe2,axe3], function() { apploop(); });
 
