@@ -46,7 +46,7 @@ var baseVector = {
             this.data[i] -= inVector.data[i];   
     },
     multiply: function(inVector) {
-        for(var i=0; i<inVector.length; this.data[i] *= inVector.data[i], i++);        
+        for(var i=0; i<this.data.length; this.data[i] *= inVector.data[i], i++);        
     },
     toString: function() {
         var s = '(';
@@ -61,42 +61,42 @@ var baseVector = {
 var staticVector = {
 
     add: function(one,two,out) {
-        for(var i=0; i<one.length; i++) {
+        for(var i=0; i<one.data.length; i++) {
             out.data[i] = one.data[i] + two.data[i]
         }
     },
     subtract: function(one,two,out) {
-        for(var i=0; i<one.length; i++) {
+        for(var i=0; i<one.data.length; i++) {
             out.data[i] = one.data[i] - two.data[i]
         }
     },
     multiply: function(one,two,out) {
-        for(var i=0; i<one.length; i++) {
+        for(var i=0; i<one.data.length; i++) {
             out.data[i] = one.data[i] * two.data[i];
         }
     },
     scale: function(one,two,out) {
-        for(var i=0; i<one.length; i++) {
+        for(var i=0; i<one.data.length; i++) {
             out.data[i] *= two;
         }
     },
     dot: function(inOne,inTwo) {
         var sum = 0;
-        for(var i=0; i<inOne.length; i++) {
+        for(var i=0; i<inOne.data.length; i++) {
             sum += inOne.data[i]*inTwo.data[i];
         }
         return sum;
     },
     distance: function(inOne,inTwo) {
         var sum = 0;
-        for(var i=0; i<inOne.length; i++) {
+        for(var i=0; i<inOne.data.length; i++) {
             sum += ((inOne.data[i]-inTwo.data[i])*(inOne.data[i]-inTwo.data[i]));
         }
         return Math.sqrt(sum);
     },
     distanceSquared: function(inOne,inTwo) {
         var sum = 0;
-        for(var i=0; i<inOne.length; i++) {
+        for(var i=0; i<inOne.data.length; i++) {
             sum += ((inOne.data[i]-inTwo.data[i])*(inOne.data[i]-inTwo.data[i]));
         }
         return sum;

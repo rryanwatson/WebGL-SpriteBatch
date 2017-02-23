@@ -548,7 +548,7 @@ var SpriteBatch = (function() {
                 sy = options.destination.y;
                 spriteInfoArray[queueCount].destination.x = sx;
                 spriteInfoArray[queueCount].destination.y = sy;
-                spriteInfoArray[queueCount].destination.z = sx+sy;
+                spriteInfoArray[queueCount].destination.z = sx+sz;
                 spriteInfoArray[queueCount].destination.w = sy+sw;
             } 
 
@@ -726,5 +726,3 @@ var SpriteBatch = (function() {
     }
 
 })();
-
-

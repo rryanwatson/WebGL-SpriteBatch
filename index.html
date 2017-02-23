@@ -23,7 +23,7 @@
                 //var spriteBatch = new SpriteBatch(gl);
                 SpriteBatch.init(gl);
 
-                var axe1 = {url:'Sprites/axe.png', destination: new Vector2(20,0), depth: 2},
+                var axe1 = {url:'Sprites/axe.png', destination: new Vector2(20,0), depth: 2, scale: new Vector2(1,2)},
                     axe2 = {url:'Sprites/axe2.png', destination: new Vector2(30,45), depth: 1},
                     axe3 = {url:'Sprites/upg_axe.png', destination: new Vector2(40,140), depth: 5};
 
@@ -46,8 +46,8 @@
                 //SpriteBatch.begin(SpriteSortMode.FrontToBack,gl.FUNC_ADD);
                 SpriteBatch.begin(SpriteSortMode.Deferred,gl.FUNC_ADD)
                 SpriteBatch.draw(axe1);
-                SpriteBatch.draw(axe2);
-                SpriteBatch.draw(axe3);
+                //SpriteBatch.draw(axe2);
+                //SpriteBatch.draw(axe3);
                 SpriteBatch.end();
             } 
         }
